@@ -34,7 +34,7 @@ function Journey() {
           icon: "✈" 
         },
         { 
-          type: "military", // HERCULES
+          type: "military",
           airline: "TNI AU / HERCULES",
           from: "HLP (Halim)", 
           dest: "Medan (KNO)", 
@@ -124,29 +124,48 @@ function Journey() {
       ]
     },
     view7: {
-      meetingDocs: [
+      memos: [
         {
-          type: "agenda",
           title: "AGENDA RAPAT",
-          content: [
-            "09:00 - Pembukaan & Sambutan Kepala BPS",
+          items: [
+            "09:00 - Pembukaan & Sambutan",
             "09:30 - Penjelasan Metodologi R3P",
             "10:30 - Coffee Break",
             "11:00 - Pembagian Wilayah & Target",
-            "12:30 - Q&A Session",
-            "13:00 - Penutupan"
-          ]
+            "12:30 - Q&A Session"
+          ],
+          color: "yellow"
         },
         {
-          type: "notes",
           title: "CATATAN PENTING",
-          content: [
+          items: [
             "• Akses jalan ke beberapa desa masih terputus",
             "• Koordinasi dengan TNI untuk wilayah khusus",
             "• Budget akomodasi sudah dicairkan",
             "• Distribusi perlengkapan besok pagi"
-          ]
+          ],
+          color: "pink"
+        },
+        {
+          title: "KONTAK DARURAT",
+          items: [
+            "Korkab Aceh: 0811-xxxx-1234",
+            "Korkab Sumut: 0812-xxxx-5678",
+            "Korkab Sumbar: 0813-xxxx-9012",
+            "BPS Pusat (24/7): 021-3841195"
+          ],
+          color: "blue"
         }
+      ]
+    },
+    view8: {
+      equipment: [
+        { name: "Rompi BPS", emoji: "🦺", x: "10%", y: "5%" },
+        { name: "Boots Anti Lumpur", emoji: "👢", x: "65%", y: "8%" },
+        { name: "HP CAPI (Full Bat)", emoji: "📱", x: "25%", y: "35%" },
+        { name: "Jas Hujan", emoji: "🧥", x: "70%", y: "40%" },
+        { name: "Powerbank 20k mAh", emoji: "🔋", x: "15%", y: "65%" },
+        { name: "ID Card BPS", emoji: "🪪", x: "50%", y: "70%" }
       ]
     },
     view11: {
@@ -204,554 +223,556 @@ function Journey() {
   ]);
 
   useLayoutEffect(() => {
-    const ctx = gsap.context(() => {
-      // --- UTILS ---
-      const randomFloat = (min, max) => Math.random() * (max - min) + min;
-      
-      // --- VIEW 1: HERO ---
-      const tlHero = gsap.timeline({
-        scrollTrigger: {
-          trigger: ".view-1",
-          start: "top top",
-          end: "bottom top",
-          scrub: 1,
-        }
-      });
-      
-      tlHero.to(".view-1 .torn-paper-top", { y: -50 }, 0)
-            .to(".view-1 .hero-title", { y: 100, opacity: 0 }, 0)
-            .to(".view-1 .hero-subtitle", { y: 80, opacity: 0 }, 0);
-
-      // STOP MOTION ENTRY dengan steps
-      gsap.from(".view-1 .hero-title", {
-        y: 80, 
-        opacity: 0, 
-        scale: 0.8, 
-        rotation: -5,
-        duration: 0.8, 
-        ease: "steps(6)", 
-        delay: 0.3
-      });
-      
-      gsap.from(".view-1 .hero-date", {
-        scale: 0, 
-        rotation: -25, 
-        opacity: 0, 
-        duration: 0.6, 
-        delay: 1, 
-        ease: "steps(4)"
-      });
-      
-      // SUBTLE FLOATING IDLE - amplitudo kecil (max 5px), durasi random
-      gsap.to(".view-1 .hero-title", {
-        y: "+=3", 
-        rotation: 0.5, 
-        duration: randomFloat(4.5, 5.5), 
-        repeat: -1, 
-        yoyo: true, 
-        ease: "sine.inOut"
-      });
-
-      // Decorative elements floating
-      document.querySelectorAll(".view-1 .tape-corner").forEach((tape, i) => {
-        gsap.to(tape, {
-          y: `+=${randomFloat(2, 4)}`,
-          rotation: `+=${randomFloat(-0.5, 0.5)}`,
-          duration: randomFloat(5, 6),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.2
-        });
-      });
-
-      // --- VIEW 2: SCALE (STAMP EFFECT dengan steps) ---
-      gsap.from(".view-2 .stat-card", {
-        scrollTrigger: { trigger: ".view-2", start: "top 70%" },
-        scale: 0, 
-        rotation: () => randomFloat(-5, 5), 
-        opacity: 0,
-        stagger: { amount: 0.6, from: "random", ease: "steps(3)" },
-        duration: 0.5, 
-        ease: "steps(5)",
-      });
-
-      // SUBTLE IDLE FLOAT untuk stat cards
-      document.querySelectorAll(".view-2 .stat-card").forEach((card) => {
-        gsap.to(card, {
-          y: `+=${randomFloat(2, 5)}`,
-          rotation: `+=${randomFloat(-0.8, 0.8)}`,
-          duration: randomFloat(4.5, 6),
-          repeat: -1, 
-          yoyo: true, 
-          ease: "sine.inOut",
-        });
-      });
-
-      // Doodle arrow animation
-      gsap.from(".view-2 .doodle-arrow", {
-        scrollTrigger: { trigger: ".view-2", start: "top 60%" },
-        scale: 0,
-        rotation: -180,
-        opacity: 0,
-        duration: 0.8,
-        ease: "steps(6)",
-        delay: 1
-      });
-
-      // --- VIEW 3: FLIGHTS (STOP MOTION PLANES dengan steps lebih kuat) ---
-      gsap.from(".view-3 .boarding-pass", {
-        scrollTrigger: { trigger: ".view-3", start: "top 75%" },
-        x: (i) => (i % 2 === 0 ? -150 : 150),
-        rotation: (i) => (i % 2 === 0 ? -8 : 8),
-        opacity: 0, 
-        scale: 0.7, 
-        stagger: 0.25, 
-        duration: 0.6, 
-        ease: "steps(8)",
-      });
-
-      // STOP MOTION PLANES - lebih jelas stepped animationnya
-      gsap.to(".plane-commercial", {
-        scrollTrigger: { 
-          trigger: ".view-3", 
-          start: "top 80%", 
-          end: "bottom 20%", 
-          scrub: 1 
-        },
-        x: "120vw", 
-        y: -60, 
-        rotation: 12, 
-        ease: "steps(18)",
-      });
-
-      gsap.fromTo(".plane-hercules", 
-        { x: -150, y: 120, rotation: -8 },
-        {
-          scrollTrigger: { 
-            trigger: ".view-3", 
-            start: "top 60%", 
-            end: "bottom top", 
-            scrub: 2 
-          },
-          x: "115vw", 
-          y: -30, 
-          rotation: 2, 
-          ease: "steps(24)",
-        }
-      );
-
-      // PROPELLER ROTATION dengan steps untuk efek jerky
-      gsap.to(".propeller", {
-        rotation: 360, 
-        repeat: -1, 
-        duration: 0.5, 
-        ease: "steps(8)",
-      });
-
-      // CLOUDS PARALLAX
-      gsap.to(".cloud-bg", {
-        scrollTrigger: { trigger: ".view-3", scrub: 0.8 },
-        y: (i) => (i + 1) * -40, 
-        ease: "none"
-      });
-
-      // Cloud subtle floating
-      document.querySelectorAll(".cloud-bg").forEach((cloud, i) => {
-        gsap.to(cloud, {
-          x: `+=${randomFloat(-3, 3)}`,
-          y: `+=${randomFloat(2, 4)}`,
-          duration: randomFloat(6, 8),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut",
-          delay: i * 0.5
-        });
-      });
-
-      // --- VIEW 4: POLAROIDS (SNAP & DROP dengan steps) ---
-      gsap.from(".view-4 .polaroid-stack", {
-        scrollTrigger: { trigger: ".view-4", start: "top 70%" },
-        y: -250, 
-        rotation: () => randomFloat(-25, 25), 
-        scale: 1.3, 
-        opacity: 0,
-        stagger: 0.18, 
-        duration: 0.6, 
-        ease: "steps(6)",
-      });
-
-      // STAMP EFFECT dengan steps
-      gsap.from(".view-4 .arrival-stamp", {
-        scrollTrigger: { trigger: ".view-4", start: "top 60%" },
-        scale: 4, 
-        opacity: 0, 
-        rotation: -30,
-        duration: 0.3, 
-        delay: 1.2, 
-        ease: "steps(4)",
-        onComplete: () => { 
-          gsap.to(".view-4 .arrival-stamp", { 
-            scale: 1, 
-            rotation: -15, 
-            duration: 0.15, 
-            ease: "steps(3)" 
-          }); 
-        }
-      });
-
-      // Subtle float untuk polaroids
-      document.querySelectorAll(".view-4 .polaroid-stack").forEach((pol) => {
-        gsap.to(pol, {
-          y: `+=${randomFloat(2, 4)}`,
-          rotation: `+=${randomFloat(-1, 1)}`,
-          duration: randomFloat(5, 6),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      });
-
-      // --- VIEW 5: ORIENTATION (STICKY NOTES POP dengan steps) ---
-      gsap.from(".view-5 .orientation-note", {
-        scrollTrigger: { trigger: ".view-5", start: "top 75%" },
-        scale: 0, 
-        rotation: () => randomFloat(-6, 6), 
-        opacity: 0,
-        stagger: 0.12, 
-        duration: 0.5, 
-        ease: "steps(6)",
-      });
-      
-      gsap.from(".view-5 .pushpin", {
-        scrollTrigger: { trigger: ".view-5", start: "top 70%" },
-        y: -80, 
-        opacity: 0, 
-        scale: 0,
-        stagger: 0.12, 
-        duration: 0.4, 
-        delay: 0.6, 
-        ease: "steps(4)",
-      });
-
-      // Subtle sway untuk sticky notes
-      document.querySelectorAll(".view-5 .orientation-note").forEach((note) => {
-        gsap.to(note, {
-          y: `+=${randomFloat(2, 5)}`,
-          rotation: `+=${randomFloat(-0.8, 0.8)}`,
-          duration: randomFloat(4, 6),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      });
-
-      // --- VIEW 6: MEMO (PAPER DROP dengan steps) ---
-      gsap.from(".view-6 .memo-sheet", {
-        scrollTrigger: { trigger: ".view-6", start: "top 75%" },
-        y: -120, 
-        rotation: 5, 
-        opacity: 0, 
-        scale: 0.9,
-        duration: 0.8, 
-        ease: "steps(8)",
-      });
-      
-      gsap.from(".view-6 .memo-line", {
-        scrollTrigger: { trigger: ".view-6", start: "top 65%" },
-        scaleX: 0, 
-        transformOrigin: "left", 
-        opacity: 0, 
-        stagger: 0.08, 
-        duration: 0.6, 
-        ease: "steps(5)",
-      });
-
-      gsap.from(".view-6 .paper-clip", {
-        scrollTrigger: { trigger: ".view-6", start: "top 65%" },
-        scale: 0,
-        rotation: 180,
-        duration: 0.5,
-        delay: 1,
-        ease: "steps(5)"
-      });
-
-      // Subtle float memo
-      gsap.to(".view-6 .memo-sheet", {
-        y: "+=3",
-        rotation: "+=0.5",
-        duration: 5,
-        repeat: -1,
-        yoyo: true,
-        ease: "sine.inOut"
-      });
-
-      // --- VIEW 7: COORDINATION (THROWING PAPERS dengan steps) ---
-      gsap.from(".view-7 .meeting-doc", {
-        scrollTrigger: { trigger: ".view-7", start: "top 70%" },
-        y: -150, 
-        rotation: () => randomFloat(-60, 60),
-        opacity: 0, 
-        scale: 0.8,
-        stagger: 0.15, 
-        duration: 0.7, 
-        ease: "steps(7)"
-      });
-      
-      // COFFEE STAIN SPREADS
-      gsap.from(".view-7 .coffee-stain", {
-        scrollTrigger: { trigger: ".view-7", start: "top 60%" },
-        scale: 0, 
-        opacity: 0, 
-        duration: 1.2, 
-        delay: 1, 
-        ease: "steps(6)"
-      });
-
-      // PEN SCATTER
-      gsap.from(".view-7 .pen-scatter", {
-        scrollTrigger: { trigger: ".view-7", start: "top 60%" },
-        scale: 0, 
-        rotation: 180, 
-        opacity: 0,
-        duration: 0.5, 
-        delay: 1.5, 
-        ease: "steps(5)"
-      });
-
-      // Subtle float untuk meeting docs
-      document.querySelectorAll(".view-7 .meeting-doc").forEach((doc) => {
-        gsap.to(doc, {
-          y: `+=${randomFloat(1, 3)}`,
-          rotation: `+=${randomFloat(-0.5, 0.5)}`,
-          duration: randomFloat(5, 7),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      });
-
-      // --- VIEW 8: EQUIPMENT (KNOLLING POP dengan steps) ---
-      gsap.from(".view-8 .equipment-item", {
-        scrollTrigger: { trigger: ".view-8", start: "top 70%" },
-        scale: 0, 
-        opacity: 0, 
-        rotation: () => randomFloat(-120, 120),
-        stagger: { amount: 0.7, from: "random", ease: "steps(3)" }, 
-        duration: 0.5, 
-        ease: "steps(6)",
-      });
-      
-      // CHECKLIST STAMP
-      gsap.from(".view-8 .checklist-note", {
-         scrollTrigger: { trigger: ".view-8", start: "top 50%" },
-         scale: 0, 
-         rotation: 20, 
-         opacity: 0,
-         duration: 0.4, 
-         delay: 1.2, 
-         ease: "steps(4)"
-      });
-
-      // Subtle float equipment
-      document.querySelectorAll(".view-8 .equipment-item").forEach((item) => {
-        gsap.to(item, {
-          y: `+=${randomFloat(2, 4)}`,
-          rotation: `+=${randomFloat(-0.5, 0.5)}`,
-          duration: randomFloat(4.5, 6),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      });
-
-      // --- VIEW 9-10: STRUGGLE (MUD & RAIN) ---
-      // MUD SPLATTERS dengan steps
-      gsap.from(".mud-splat", {
-        scrollTrigger: { trigger: ".view-9", start: "top 60%" },
-        scale: 0,
-        opacity: 0,
-        rotation: () => randomFloat(0, 360),
-        stagger: 0.15,
-        duration: 0.3,
-        ease: "steps(4)"
-      });
-
-      // RAIN START
-      gsap.from(".rain-overlay .raindrop", {
-        scrollTrigger: { trigger: ".view-9", start: "top 60%" },
-        opacity: 0,
-        duration: 0.5,
-        stagger: 0.02
-      });
-
-      // --- VIEW 11: QUOTES (STICKY SCATTER dengan steps) ---
-      gsap.from(".view-11 .quote-sticky", {
-        scrollTrigger: { trigger: ".view-11", start: "top 75%" },
-        scale: 0, 
-        rotation: () => randomFloat(-8, 8), 
-        opacity: 0,
-        stagger: 0.12, 
-        duration: 0.5, 
-        ease: "steps(6)",
-      });
-      
-      // SUBTLE IDLE SWAY
-      document.querySelectorAll(".view-11 .quote-sticky").forEach((sticky) => {
-        gsap.to(sticky, {
-          y: `+=${randomFloat(2, 5)}`, 
-          rotation: `+=${randomFloat(-1, 1)}`,
-          duration: randomFloat(4, 6), 
-          repeat: -1, 
-          yoyo: true, 
-          ease: "sine.inOut",
-        });
-      });
-
-      // --- VIEW 12: INTERVIEW (PHOTO SLIDE dengan steps) ---
-      gsap.from(".view-12 .interview-photo.main-photo", {
-        scrollTrigger: { trigger: ".view-12", start: "top 70%" },
-        x: -150, 
-        rotation: -15, 
-        opacity: 0, 
-        scale: 0.9,
-        duration: 0.8, 
-        ease: "steps(8)"
-      });
-      
-      gsap.from(".view-12 .interview-photo.secondary-photo", {
-        scrollTrigger: { trigger: ".view-12", start: "top 70%" },
-        x: 150, 
-        rotation: 15, 
-        opacity: 0, 
-        scale: 0.9,
-        duration: 0.8, 
-        delay: 0.2, 
-        ease: "steps(8)"
-      });
-      
-      gsap.from(".view-12 .handwritten-caption", {
-        scrollTrigger: { trigger: ".view-12", start: "top 60%" },
-        opacity: 0, 
-        y: 30, 
-        scale: 0.8, 
-        rotation: 10,
-        duration: 0.6, 
-        delay: 0.5, 
-        ease: "steps(5)"
-      });
-
-      // Subtle float interview photos
-      document.querySelectorAll(".view-12 .interview-photo").forEach((photo) => {
-        gsap.to(photo, {
-          y: `+=${randomFloat(2, 4)}`,
-          rotation: `+=${randomFloat(-0.5, 0.5)}`,
-          duration: randomFloat(5, 6.5),
-          repeat: -1,
-          yoyo: true,
-          ease: "sine.inOut"
-        });
-      });
-
-      // --- VIEW 13: CHART (BARS FILL dengan steps) ---
-      gsap.from(".view-13 .progress-bar-container", {
-        scrollTrigger: { trigger: ".view-13", start: "top 70%" },
-        opacity: 0, 
-        x: -30, 
-        stagger: 0.1, 
-        duration: 0.4,
-        ease: "steps(4)"
-      });
-      
-      gsap.from(".view-13 .progress-fill", {
-        scrollTrigger: { trigger: ".view-13", start: "top 65%" },
-        scaleX: 0, 
-        transformOrigin: "left", 
-        stagger: 0.15, 
-        duration: 1.2, 
-        ease: "steps(12)",
-      });
-
-      // --- VIEW 14: SYNC (SCREEN FLIP dengan steps) ---
-      gsap.from(".view-14 .laptop-screen", {
-        scrollTrigger: { trigger: ".view-14", start: "top 70%" },
-        rotationX: 90, 
-        opacity: 0, 
-        scale: 0.8,
-        duration: 1, 
-        ease: "steps(10)"
-      });
-
-      // COFFEE & NOTEBOOK POP
-      gsap.from(".view-14 .coffee-cup", {
-        scrollTrigger: { trigger: ".view-14", start: "top 65%" },
-        scale: 0, 
-        rotation: -180, 
-        opacity: 0,
-        duration: 0.5, 
-        delay: 0.5, 
-        ease: "steps(5)"
-      });
-
-      gsap.from(".view-14 .notebook", {
-        scrollTrigger: { trigger: ".view-14", start: "top 65%" },
-        scale: 0, 
-        rotation: 30, 
-        opacity: 0,
-        duration: 0.5, 
-        delay: 0.7, 
-        ease: "steps(5)"
-      });
-
-      // --- VIEW 15: ENVELOPE (DROP & SEAL dengan steps) ---
-      gsap.from(".view-15 .envelope", {
-        scrollTrigger: { trigger: ".view-15", start: "top 70%" },
-        y: -150, 
-        opacity: 0, 
-        rotation: -5, 
-        scale: 0.9,
-        duration: 1, 
-        ease: "steps(10)"
-      });
-      
-      // WAX SEAL STAMP
-      gsap.from(".view-15 .stamp-seal", {
-        scrollTrigger: { trigger: ".view-15", start: "top 60%" },
-        scale: 6, 
-        opacity: 0, 
-        rotation: 180,
-        duration: 0.25, 
-        delay: 1, 
-        ease: "steps(4)",
-        onComplete: () => {
-          gsap.to(".view-15 .stamp-seal", {
-            scale: 1, 
-            rotation: 0, 
-            duration: 0.15, 
-            ease: "steps(3)"
-          });
-        }
-      });
-
-      // Scroll Progress
-      gsap.to(".scroll-progress", {
-        scaleX: 1, 
-        transformOrigin: "left", 
-        ease: "none",
-        scrollTrigger: { 
-          trigger: containerRef.current, 
-          start: "top top", 
-          end: "bottom bottom", 
-          scrub: true 
-        },
-      });
-      
-    }, containerRef);
-
-    return () => ctx.revert();
+    // KILL ALL TRIGGERS on unmount
+    return () => {
+      ScrollTrigger.getAll().forEach(trigger => trigger.kill());
+    };
   }, []);
 
-  // Initialize GSAP Draggable untuk foto struggle (View 9-10)
+  useLayoutEffect(() => {
+    // Small timeout to ensure DOM is fully painted (INIT BUG FIX)
+    const timeoutId = setTimeout(() => {
+      const ctx = gsap.context(() => {
+        // --- UTILS ---
+        const randomFloat = (min, max) => Math.random() * (max - min) + min;
+        
+        // --- VIEW 1: HERO ---
+        const tlHero = gsap.timeline({
+          scrollTrigger: {
+            trigger: ".view-1",
+            start: "top top",
+            end: "bottom top",
+            scrub: 1,
+          }
+        });
+        
+        tlHero.to(".view-1 .torn-paper-top", { y: -50 }, 0)
+              .to(".view-1 .hero-title", { y: 100, opacity: 0 }, 0)
+              .to(".view-1 .hero-subtitle", { y: 80, opacity: 0 }, 0);
+
+        // STOP MOTION ENTRY
+        gsap.from(".view-1 .hero-title", {
+          y: 80, 
+          opacity: 0, 
+          scale: 0.8, 
+          rotation: -5,
+          duration: 0.8, 
+          ease: "steps(6)", 
+          delay: 0.3
+        });
+        
+        gsap.from(".view-1 .hero-date", {
+          scale: 0, 
+          rotation: -25, 
+          opacity: 0, 
+          duration: 0.6, 
+          delay: 1, 
+          ease: "steps(4)"
+        });
+        
+        // SUBTLE FLOATING
+        gsap.to(".view-1 .hero-title", {
+          y: "+=3", 
+          rotation: 0.5, 
+          duration: randomFloat(4.5, 5.5), 
+          repeat: -1, 
+          yoyo: true, 
+          ease: "sine.inOut"
+        });
+
+        document.querySelectorAll(".view-1 .tape-corner").forEach((tape, i) => {
+          gsap.to(tape, {
+            y: `+=${randomFloat(2, 4)}`,
+            rotation: `+=${randomFloat(-0.5, 0.5)}`,
+            duration: randomFloat(5, 6),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            delay: i * 0.2
+          });
+        });
+
+        // --- VIEW 2: SCALE ---
+        gsap.from(".view-2 .stat-card", {
+          scrollTrigger: { trigger: ".view-2", start: "top 70%" },
+          scale: 0, 
+          rotation: () => randomFloat(-5, 5), 
+          opacity: 0,
+          stagger: { amount: 0.6, from: "random", ease: "steps(3)" },
+          duration: 0.5, 
+          ease: "steps(5)",
+        });
+
+        document.querySelectorAll(".view-2 .stat-card").forEach((card) => {
+          gsap.to(card, {
+            y: `+=${randomFloat(2, 5)}`,
+            rotation: `+=${randomFloat(-0.8, 0.8)}`,
+            duration: randomFloat(4.5, 6),
+            repeat: -1, 
+            yoyo: true, 
+            ease: "sine.inOut",
+          });
+        });
+
+        gsap.from(".view-2 .doodle-arrow", {
+          scrollTrigger: { trigger: ".view-2", start: "top 60%" },
+          scale: 0,
+          rotation: -180,
+          opacity: 0,
+          duration: 0.8,
+          ease: "steps(6)",
+          delay: 1
+        });
+
+        // --- VIEW 3: FLIGHTS ---
+        gsap.from(".view-3 .boarding-pass", {
+          scrollTrigger: { trigger: ".view-3", start: "top 75%" },
+          x: (i) => (i % 2 === 0 ? -150 : 150),
+          rotation: (i) => (i % 2 === 0 ? -8 : 8),
+          opacity: 0, 
+          scale: 0.7, 
+          stagger: 0.25, 
+          duration: 0.6, 
+          ease: "steps(8)",
+        });
+
+        gsap.to(".plane-commercial", {
+          scrollTrigger: { 
+            trigger: ".view-3", 
+            start: "top 80%", 
+            end: "bottom 20%", 
+            scrub: 1 
+          },
+          x: "120vw", 
+          y: -60, 
+          rotation: 12, 
+          ease: "steps(18)",
+        });
+
+        gsap.fromTo(".plane-hercules", 
+          { x: -150, y: 120, rotation: -8 },
+          {
+            scrollTrigger: { 
+              trigger: ".view-3", 
+              start: "top 60%", 
+              end: "bottom top", 
+              scrub: 2 
+            },
+            x: "115vw", 
+            y: -30, 
+            rotation: 2, 
+            ease: "steps(24)",
+          }
+        );
+
+        gsap.to(".propeller", {
+          rotation: 360, 
+          repeat: -1, 
+          duration: 0.5, 
+          ease: "steps(8)",
+        });
+
+        gsap.to(".cloud-bg", {
+          scrollTrigger: { trigger: ".view-3", scrub: 0.8 },
+          y: (i) => (i + 1) * -40, 
+          ease: "none"
+        });
+
+        document.querySelectorAll(".cloud-bg").forEach((cloud, i) => {
+          gsap.to(cloud, {
+            x: `+=${randomFloat(-3, 3)}`,
+            y: `+=${randomFloat(2, 4)}`,
+            duration: randomFloat(6, 8),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut",
+            delay: i * 0.5
+          });
+        });
+
+        // --- VIEW 4: POLAROIDS (PLOK! EFFECT) ---
+        gsap.from(".view-4 .polaroid-stack", {
+          scrollTrigger: { trigger: ".view-4", start: "top 70%" },
+          y: -180, 
+          rotation: () => randomFloat(-35, 35), 
+          scale: 0.4, 
+          opacity: 0,
+          stagger: 0.15, 
+          duration: 0.4, 
+          ease: "steps(5)",
+        });
+
+        gsap.from(".view-4 .arrival-stamp", {
+          scrollTrigger: { trigger: ".view-4", start: "top 60%" },
+          scale: 4, 
+          opacity: 0, 
+          rotation: -30,
+          duration: 0.3, 
+          delay: 1, 
+          ease: "steps(4)",
+          onComplete: () => { 
+            gsap.to(".view-4 .arrival-stamp", { 
+              scale: 1, 
+              rotation: -15, 
+              duration: 0.15, 
+              ease: "steps(3)" 
+            }); 
+          }
+        });
+
+        document.querySelectorAll(".view-4 .polaroid-stack").forEach((pol) => {
+          gsap.to(pol, {
+            y: `+=${randomFloat(1, 3)}`,
+            rotation: `+=${randomFloat(-0.5, 0.5)}`,
+            duration: randomFloat(5, 6),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+
+        // --- VIEW 5: ORIENTATION ---
+        gsap.from(".view-5 .orientation-note", {
+          scrollTrigger: { trigger: ".view-5", start: "top 75%" },
+          scale: 0, 
+          rotation: () => randomFloat(-6, 6), 
+          opacity: 0,
+          stagger: 0.12, 
+          duration: 0.5, 
+          ease: "steps(6)",
+        });
+        
+        gsap.from(".view-5 .pushpin", {
+          scrollTrigger: { trigger: ".view-5", start: "top 70%" },
+          y: -80, 
+          opacity: 0, 
+          scale: 0,
+          stagger: 0.12, 
+          duration: 0.4, 
+          delay: 0.6, 
+          ease: "steps(4)",
+        });
+
+        document.querySelectorAll(".view-5 .orientation-note").forEach((note) => {
+          gsap.to(note, {
+            y: `+=${randomFloat(2, 5)}`,
+            rotation: `+=${randomFloat(-0.8, 0.8)}`,
+            duration: randomFloat(4, 6),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+
+        // --- VIEW 6: MEMO ---
+        gsap.from(".view-6 .memo-sheet", {
+          scrollTrigger: { trigger: ".view-6", start: "top 75%" },
+          y: -120, 
+          rotation: 5, 
+          opacity: 0, 
+          scale: 0.9,
+          duration: 0.8, 
+          ease: "steps(8)",
+        });
+        
+        gsap.from(".view-6 .memo-line", {
+          scrollTrigger: { trigger: ".view-6", start: "top 65%" },
+          scaleX: 0, 
+          transformOrigin: "left", 
+          opacity: 0, 
+          stagger: 0.08, 
+          duration: 0.6, 
+          ease: "steps(5)",
+        });
+
+        gsap.from(".view-6 .paper-clip", {
+          scrollTrigger: { trigger: ".view-6", start: "top 65%" },
+          scale: 0,
+          rotation: 180,
+          duration: 0.5,
+          delay: 1,
+          ease: "steps(5)"
+        });
+
+        gsap.to(".view-6 .memo-sheet", {
+          y: "+=3",
+          rotation: "+=0.5",
+          duration: 5,
+          repeat: -1,
+          yoyo: true,
+          ease: "sine.inOut"
+        });
+
+        // --- VIEW 7: MEMO BOARD (PLOK! SCATTER) ---
+        gsap.from(".view-7 .memo-card", {
+          scrollTrigger: { trigger: ".view-7", start: "top 70%" },
+          y: -120, 
+          rotation: () => randomFloat(-45, 45),
+          opacity: 0, 
+          scale: 0.6,
+          stagger: 0.12, 
+          duration: 0.5, 
+          ease: "steps(6)"
+        });
+
+        gsap.from(".view-7 .thumbtack", {
+          scrollTrigger: { trigger: ".view-7", start: "top 65%" },
+          y: -60, 
+          opacity: 0, 
+          scale: 0,
+          stagger: 0.12, 
+          duration: 0.4, 
+          delay: 0.5, 
+          ease: "steps(4)",
+        });
+
+        document.querySelectorAll(".view-7 .memo-card").forEach((card) => {
+          gsap.to(card, {
+            y: `+=${randomFloat(1, 3)}`,
+            rotation: `+=${randomFloat(-0.5, 0.5)}`,
+            duration: randomFloat(5, 7),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+
+        // --- VIEW 8: FLATLAY (POP IN) ---
+        gsap.from(".view-8 .flatlay-item", {
+          scrollTrigger: { trigger: ".view-8", start: "top 70%" },
+          scale: 0, 
+          opacity: 0, 
+          rotation: () => randomFloat(-120, 120),
+          stagger: { amount: 0.6, from: "random", ease: "steps(3)" }, 
+          duration: 0.5, 
+          ease: "steps(6)",
+        });
+
+        document.querySelectorAll(".view-8 .flatlay-item").forEach((item) => {
+          gsap.to(item, {
+            y: `+=${randomFloat(2, 4)}`,
+            rotation: `+=${randomFloat(-0.5, 0.5)}`,
+            duration: randomFloat(4.5, 6),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+
+        // --- VIEW 9-10: STRUGGLE ---
+        gsap.from(".mud-splat", {
+          scrollTrigger: { trigger: ".view-9", start: "top 60%" },
+          scale: 0,
+          opacity: 0,
+          rotation: () => randomFloat(0, 360),
+          stagger: 0.15,
+          duration: 0.3,
+          ease: "steps(4)"
+        });
+
+        gsap.from(".rain-overlay .raindrop", {
+          scrollTrigger: { trigger: ".view-9", start: "top 60%" },
+          opacity: 0,
+          duration: 0.5,
+          stagger: 0.02
+        });
+
+        // --- VIEW 11: QUOTES ---
+        gsap.from(".view-11 .quote-sticky", {
+          scrollTrigger: { trigger: ".view-11", start: "top 75%" },
+          scale: 0, 
+          rotation: () => randomFloat(-8, 8), 
+          opacity: 0,
+          stagger: 0.12, 
+          duration: 0.5, 
+          ease: "steps(6)",
+        });
+        
+        document.querySelectorAll(".view-11 .quote-sticky").forEach((sticky) => {
+          gsap.to(sticky, {
+            y: `+=${randomFloat(2, 5)}`, 
+            rotation: `+=${randomFloat(-1, 1)}`,
+            duration: randomFloat(4, 6), 
+            repeat: -1, 
+            yoyo: true, 
+            ease: "sine.inOut",
+          });
+        });
+
+        // --- VIEW 12: INTERVIEW ---
+        gsap.from(".view-12 .interview-photo.main-photo", {
+          scrollTrigger: { trigger: ".view-12", start: "top 70%" },
+          x: -150, 
+          rotation: -15, 
+          opacity: 0, 
+          scale: 0.9,
+          duration: 0.8, 
+          ease: "steps(8)"
+        });
+        
+        gsap.from(".view-12 .interview-photo.secondary-photo", {
+          scrollTrigger: { trigger: ".view-12", start: "top 70%" },
+          x: 150, 
+          rotation: 15, 
+          opacity: 0, 
+          scale: 0.9,
+          duration: 0.8, 
+          delay: 0.2, 
+          ease: "steps(8)"
+        });
+        
+        gsap.from(".view-12 .handwritten-caption", {
+          scrollTrigger: { trigger: ".view-12", start: "top 60%" },
+          opacity: 0, 
+          y: 30, 
+          scale: 0.8, 
+          rotation: 10,
+          duration: 0.6, 
+          delay: 0.5, 
+          ease: "steps(5)"
+        });
+
+        document.querySelectorAll(".view-12 .interview-photo").forEach((photo) => {
+          gsap.to(photo, {
+            y: `+=${randomFloat(2, 4)}`,
+            rotation: `+=${randomFloat(-0.5, 0.5)}`,
+            duration: randomFloat(5, 6.5),
+            repeat: -1,
+            yoyo: true,
+            ease: "sine.inOut"
+          });
+        });
+
+        // --- VIEW 13: SKETCH CHART (DRAWING EFFECT) ---
+        gsap.from(".view-13 .progress-bar-container", {
+          scrollTrigger: { trigger: ".view-13", start: "top 70%" },
+          opacity: 0, 
+          x: -30, 
+          stagger: 0.1, 
+          duration: 0.4,
+          ease: "steps(4)"
+        });
+        
+        // SKETCH DRAWING EFFECT
+        gsap.from(".view-13 .sketch-bar", {
+          scrollTrigger: { trigger: ".view-13", start: "top 65%" },
+          scaleX: 0, 
+          transformOrigin: "left", 
+          stagger: 0.15, 
+          duration: 1.2, 
+          ease: "steps(12)",
+        });
+
+        // --- VIEW 14: SYNC ---
+        gsap.from(".view-14 .laptop-screen", {
+          scrollTrigger: { trigger: ".view-14", start: "top 70%" },
+          rotationX: 90, 
+          opacity: 0, 
+          scale: 0.8,
+          duration: 1, 
+          ease: "steps(10)"
+        });
+
+        gsap.from(".view-14 .coffee-cup", {
+          scrollTrigger: { trigger: ".view-14", start: "top 65%" },
+          scale: 0, 
+          rotation: -180, 
+          opacity: 0,
+          duration: 0.5, 
+          delay: 0.5, 
+          ease: "steps(5)"
+        });
+
+        gsap.from(".view-14 .notebook", {
+          scrollTrigger: { trigger: ".view-14", start: "top 65%" },
+          scale: 0, 
+          rotation: 30, 
+          opacity: 0,
+          duration: 0.5, 
+          delay: 0.7, 
+          ease: "steps(5)"
+        });
+
+        // --- VIEW 15: ENVELOPE REVEAL ---
+        const envelopeTimeline = gsap.timeline({
+          scrollTrigger: { 
+            trigger: ".view-15", 
+            start: "top 70%",
+            toggleActions: "play none none reverse"
+          }
+        });
+
+        // 1. Envelope drops in
+        envelopeTimeline.from(".view-15 .envelope", {
+          y: -150, 
+          opacity: 0, 
+          rotation: -5, 
+          scale: 0.9,
+          duration: 0.8, 
+          ease: "steps(8)"
+        });
+
+        // 2. Flap opens
+        envelopeTimeline.to(".view-15 .envelope-flap", {
+          rotationX: -180,
+          transformOrigin: "bottom center",
+          duration: 0.6,
+          ease: "steps(6)"
+        }, "+=0.3");
+
+        // 3. Letter slides out
+        envelopeTimeline.from(".view-15 .letter-content", {
+          y: 100,
+          opacity: 0,
+          duration: 0.8,
+          ease: "steps(8)"
+        }, "-=0.2");
+
+        // 4. Wax seal stamp
+        envelopeTimeline.from(".view-15 .stamp-seal", {
+          scale: 6, 
+          opacity: 0, 
+          rotation: 180,
+          duration: 0.25, 
+          ease: "steps(4)",
+          onComplete: () => {
+            gsap.to(".view-15 .stamp-seal", {
+              scale: 1, 
+              rotation: 0, 
+              duration: 0.15, 
+              ease: "steps(3)"
+            });
+          }
+        }, "-=0.1");
+
+        // Scroll Progress
+        gsap.to(".scroll-progress", {
+          scaleX: 1, 
+          transformOrigin: "left", 
+          ease: "none",
+          scrollTrigger: { 
+            trigger: containerRef.current, 
+            start: "top top", 
+            end: "bottom bottom", 
+            scrub: true 
+          },
+        });
+        
+      }, containerRef);
+
+      // REFRESH after everything is set up (INIT BUG FIX)
+      ScrollTrigger.refresh();
+
+      return () => {
+        ctx.revert();
+        clearTimeout(timeoutId);
+      };
+    }, 100); // Small delay to ensure DOM is ready
+
+    return () => clearTimeout(timeoutId);
+  }, []);
+
+  // Initialize GSAP Draggable
   useLayoutEffect(() => {
     if (photoRefs.current.length > 0) {
       const instances = photoRefs.current.map((el) => {
@@ -759,7 +780,7 @@ function Journey() {
         
         return Draggable.create(el, {
           type: "x,y",
-          inertia: true, // Momentum saat dilepas
+          inertia: true,
           bounds: ".photo-pile",
           onDragStart: function() {
             gsap.to(this.target, {
@@ -804,7 +825,6 @@ function Journey() {
         <div className="tape-corner top-left"></div>
         <div className="tape-corner top-right"></div>
         
-        {/* Decorative vintage stamps */}
         <div className="decorative-stamp stamp-1">OFFICIAL</div>
         <div className="decorative-stamp stamp-2">MISSION</div>
       </section>
@@ -843,12 +863,11 @@ function Journey() {
         </div>
         <div className="doodle-arrow"></div>
         
-        {/* Decorative paper clips */}
         <div className="paper-clip-decor clip-1"></div>
         <div className="paper-clip-decor clip-2"></div>
       </section>
 
-      {/* VIEW 3: FLIGHTS (PAPER CUTOUT THEME) */}
+      {/* VIEW 3: FLIGHTS */}
       <section className="story-view view-3">
         <div className="cloud-layer">
            <div className="cloud-bg c1"></div>
@@ -856,7 +875,6 @@ function Journey() {
            <div className="cloud-bg c3"></div>
         </div>
         <div className="planes-container">
-           {/* COMMERCIAL PLANE */}
            <div className="airplane-element plane-commercial">
               <div className="plane-body"></div>
               <div className="plane-wing"></div>
@@ -866,7 +884,6 @@ function Journey() {
               <div className="plane-window w3"></div>
            </div>
            
-           {/* HERCULES PLANE */}
            <div className="airplane-element plane-hercules">
               <div className="hercules-fuselage"></div>
               <div className="hercules-cockpit"></div>
@@ -923,14 +940,14 @@ function Journey() {
         </div>
       </section>
 
-      {/* VIEW 4: ARRIVAL */}
+      {/* VIEW 4: ARRIVAL (LAYERED POLAROID) */}
       <section className="story-view view-4">
         <div className="view-header">
           <h2 className="section-title handwritten">Tiba di Lapangan</h2>
         </div>
         <div className="polaroid-grid">
           {viewData.view4.arrivals.map((arrival, index) => (
-            <div key={index} className="polaroid-stack" style={{ "--rotation": `${index % 2 === 0 ? -3 : 2}deg` }}>
+            <div key={index} className="polaroid-stack">
               <div className="tape-top"></div>
               <div className={`polaroid-image arrival-${index + 1}`}></div>
               <div className="polaroid-caption">{arrival.caption}</div>
@@ -949,7 +966,6 @@ function Journey() {
           </div>
         </div>
         
-        {/* Decorative confetti */}
         <div className="confetti-piece c1"></div>
         <div className="confetti-piece c2"></div>
         <div className="confetti-piece c3"></div>
@@ -977,7 +993,6 @@ function Journey() {
           ))}
         </div>
         
-        {/* Decorative pen */}
         <div className="decorative-pen"></div>
       </section>
 
@@ -1019,86 +1034,65 @@ function Journey() {
           <div className="paper-clip"></div>
         </div>
         
-        {/* Decorative coffee ring stain */}
         <div className="coffee-ring-stain"></div>
       </section>
 
-      {/* VIEW 7: COORDINATION (CHAOS TABLE) */}
+      {/* VIEW 7: MEMO BOARD (THE BULLETIN BOARD) */}
       <section className="story-view view-7">
         <div className="view-header">
-          <h2 className="section-title handwritten">Rapat Alot</h2>
-          <p className="section-subtitle">Koordinasi dengan Pemda & BPS Daerah</p>
+          <h2 className="section-title handwritten">Koordinasi dengan Pemda & BPS</h2>
+          <p className="section-subtitle">Papan Pengumuman Posko</p>
         </div>
-        <div className="meeting-table">
-          <div className="meeting-doc doc-map"></div>
-          
-          {viewData.view7.meetingDocs.map((doc, index) => (
-            <div key={index} className={`meeting-doc doc-${doc.type}`}>
-              <div className="doc-title">{doc.title}</div>
-              <div className="doc-content">
-                {doc.content.map((item, i) => (
-                  <div key={i} className="doc-line">{item}</div>
+        <div className="memo-board">
+          {viewData.view7.memos.map((memo, index) => (
+            <div key={index} className={`memo-card memo-${memo.color}`} style={{
+              top: `${15 + (index % 2) * 35}%`,
+              left: `${10 + index * 25}%`,
+              transform: `rotate(${index % 2 === 0 ? -6 : 4}deg)`
+            }}>
+              <div className="thumbtack"></div>
+              <div className="memo-card-title">{memo.title}</div>
+              <div className="memo-card-content">
+                {memo.items.map((item, i) => (
+                  <div key={i} className="memo-item">{item}</div>
                 ))}
               </div>
+              <div className="torn-edge"></div>
             </div>
           ))}
           
-          <div className="meeting-doc doc-photo-1"></div>
-          <div className="meeting-doc doc-photo-2"></div>
-          
-          <div className="coffee-stain"></div>
-          <div className="coffee-stain coffee-stain-2"></div>
-          <div className="pen-scatter"></div>
-          <div className="pen-scatter pen-2"></div>
-          
-          {/* Decorative sticky tabs */}
-          <div className="sticky-tab tab-1">URGENT</div>
-          <div className="sticky-tab tab-2">FOLLOW UP</div>
+          <div className="sticky-tab tab-urgent">URGENT</div>
+          <div className="sticky-tab tab-done">FOLLOW UP</div>
         </div>
       </section>
 
-      {/* VIEW 8: EQUIPMENT (KNOLLING) */}
+      {/* VIEW 8: SURVIVAL KIT (THE FLATLAY) */}
       <section className="story-view view-8">
         <div className="view-header">
           <h2 className="section-title">Survival Kit</h2>
           <p className="section-subtitle">Senjata PCL di Medan Bencana</p>
         </div>
         <div className="flatlay-container">
-          <div className="equipment-item vest" style={{ "--x": "15%", "--y": "10%" }}>
-            <div className="item-image vest-img"></div>
-            <div className="item-label">Rompi BPS</div>
-          </div>
-          <div className="equipment-item boots" style={{ "--x": "55%", "--y": "15%" }}>
-            <div className="item-image boots-img"></div>
-            <div className="item-label">Boots Anti Lumpur</div>
-          </div>
-          <div className="equipment-item phone" style={{ "--x": "35%", "--y": "40%" }}>
-            <div className="item-image phone-img"></div>
-            <div className="item-label">HP CAPI Full Bat</div>
-          </div>
-          <div className="equipment-item raincoat" style={{ "--x": "70%", "--y": "50%" }}>
-            <div className="item-image raincoat-img"></div>
-            <div className="item-label">Jas Hujan</div>
-          </div>
-          <div className="equipment-item powerbank" style={{ "--x": "20%", "--y": "65%" }}>
-            <div className="item-image powerbank-img"></div>
-            <div className="item-label">Powerbank 20k mAh</div>
-          </div>
-          <div className="equipment-item bag" style={{ "--x": "50%", "--y": "70%" }}>
-            <div className="item-image bag-img"></div>
-            <div className="item-label">Dry Bag Dokumen</div>
+          {viewData.view8.equipment.map((item, index) => (
+            <div key={index} className="flatlay-item" style={{
+              left: item.x,
+              top: item.y,
+              transform: `rotate(${index % 2 === 0 ? -8 : 5}deg)`
+            }}>
+              <div className="flatlay-emoji">{item.emoji}</div>
+              <div className="flatlay-label">{item.name}</div>
+              <div className="doodle-connector"></div>
+            </div>
+          ))}
+          
+          <div className="checklist-stamp">
+            <span className="check-mark">✓</span>
+            <span className="check-text">SIAP TEMPUR!</span>
           </div>
         </div>
-        <div className="checklist-note">
-          <span className="check-mark">✓</span>
-          <span className="check-text">SIAP TEMPUR!</span>
-        </div>
-        
-        {/* Decorative ruler */}
-        <div className="decorative-ruler"></div>
       </section>
 
-      {/* VIEW 9-10: STRUGGLE (MUD & RAIN) */}
+      {/* VIEW 9-10: STRUGGLE */}
       <section className="story-view view-9 view-10">
         <div className="rain-overlay">
           {[...Array(30)].map((_, i) => (
@@ -1144,7 +1138,6 @@ function Journey() {
           </div>
         </div>
         
-        {/* Decorative footprints */}
         <div className="footprint f1"></div>
         <div className="footprint f2"></div>
         <div className="footprint f3"></div>
@@ -1174,7 +1167,6 @@ function Journey() {
           ))}
         </div>
         
-        {/* Decorative heart */}
         <div className="decorative-heart"></div>
       </section>
 
@@ -1199,14 +1191,14 @@ function Journey() {
         </div>
       </section>
 
-      {/* VIEW 13: CHART */}
+      {/* VIEW 13: SKETCH CHART */}
       <section className="story-view view-13">
         <div className="view-header">
-          <h2 className="section-title">Progress Monitoring</h2>
-          <p className="section-subtitle">Update Real-time Dashboard</p>
+          <h2 className="section-title handwritten">Progress Monitoring</h2>
+          <p className="section-subtitle">Sketsa di Kertas Grafik</p>
         </div>
         <div className="chart-container">
-          <div className="paper-texture"></div>
+          <div className="graph-paper-bg"></div>
           <div className="chart-title handwritten">Target vs Realisasi</div>
           <div className="progress-chart">
             {viewData.view13.progress.map((item, index) => (
@@ -1215,24 +1207,17 @@ function Journey() {
                   <span className="p-day">{item.day}</span>
                   <span className="p-note handwritten">({item.note})</span>
                 </div>
-                <div className="progress-bars">
-                  <div className="progress-bar target-bar">
-                    <div className="bar-pattern"></div>
+                <div className="sketch-bar-wrapper">
+                  <div className="sketch-bar" style={{ width: `${item.percentage}%` }}>
+                    <div className="sketch-texture"></div>
                   </div>
-                  <div className="progress-bar realisasi-bar">
-                    <div className="progress-fill" style={{ width: `${item.percentage}%` }}>
-                      <div className="fill-texture"></div>
-                    </div>
-                  </div>
+                  <div className="sketch-outline"></div>
                 </div>
                 <div className="progress-val handwritten">{item.percentage}%</div>
               </div>
             ))}
           </div>
         </div>
-        
-        {/* Decorative graph paper background */}
-        <div className="graph-paper-bg"></div>
       </section>
 
       {/* VIEW 14: SYNC */}
@@ -1264,13 +1249,12 @@ function Journey() {
         </div>
         <div className="time-caption handwritten">23:55 WIB - Menunggu server BPS</div>
         
-        {/* Decorative stars for night effect */}
         <div className="night-star s1"></div>
         <div className="night-star s2"></div>
         <div className="night-star s3"></div>
       </section>
 
-      {/* VIEW 15: CLOSING */}
+      {/* VIEW 15: ENVELOPE CLOSING */}
       <section className="story-view view-15">
         <div className="view-header">
           <h2 className="section-title handwritten">Misi Selesai</h2>
@@ -1278,16 +1262,15 @@ function Journey() {
         <div className="envelope-container">
           <div className="envelope">
             <div className="envelope-flap"></div>
-            <div className="envelope-body">
-              <div className="envelope-content">
-                <h3 className="envelope-title">Untuk Indonesia,</h3>
-                <p className="envelope-message">
-                  Sebuah kehormatan bagi kami, 510 mahasiswa Politeknik Statistika STIS, 
-                  dapat berkontribusi dalam pemulihan negeri ini.
-                </p>
-                <div className="envelope-signature handwritten">Salam, PKL Angkatan 65</div>
-              </div>
-            </div>
+            <div className="envelope-body"></div>
+          </div>
+          <div className="letter-content">
+            <h3 className="letter-title">Untuk Indonesia,</h3>
+            <p className="letter-message">
+              Sebuah kehormatan bagi kami, 510 mahasiswa Politeknik Statistika STIS, 
+              dapat berkontribusi dalam pemulihan negeri ini.
+            </p>
+            <div className="letter-signature handwritten">Salam, PKL Angkatan 65</div>
           </div>
           <div className="stamp-seal">
             <div className="seal-wax">
@@ -1297,7 +1280,6 @@ function Journey() {
         </div>
         <div className="closing-note handwritten">Terima Kasih.</div>
         
-        {/* Decorative flower petals */}
         <div className="flower-petal p1"></div>
         <div className="flower-petal p2"></div>
         <div className="flower-petal p3"></div>
